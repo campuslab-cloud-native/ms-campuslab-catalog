@@ -1,0 +1,182 @@
+openapi: 3.0.3
+
+info:
+  title: CampusLab Catalog API
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8082
+
+tags:
+  - name: Catalog
+
+paths:
+
+  /api/catalog/resources:
+
+    get:
+      tags:
+        - Catalog
+      summary: Listar recursos
+      operationId: getResources
+      security:
+        - bearerAuth: []
+
+      responses:
+        '200':
+          description: Recursos encontrados
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ResourceResponse'
+        '401':
+          description: No autenticado
+        '403':
+          description: No autorizado
+
+    post:
+      tags:
+        - Catalog
+      summary: Crear recurso
+      operationId: createResource
+      security:
+        - bearerAuth: []
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResourceRequest'
+
+      responses:
+        '201':
+          description: Recurso creado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceResponse'
+        '400':
+          description: Solicitud inválida
+        '401':
+          description: No autenticado
+        '403':
+          description: No autorizado
+
+  /api/catalog/resources/{id}:
+
+    get:
+      tags:
+        - Catalog
+      summary: Obtener recurso por ID
+      operationId: getResourceById
+      security:
+        - bearerAuth: []
+
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+
+      responses:
+        '200':
+          description: Recurso encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceResponse'
+        '404':
+          description: Recurso no encontrado
+        '401':
+          description: No autenticado
+        '403':
+          description: No autorizado
+
+    put:
+      tags:
+        - Catalog
+      summary: Actualizar recurso
+      operationId: updateResource
+      security:
+        - bearerAuth: []
+
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResourceRequest'
+
+      responses:
+        '200':
+          description: Recurso actualizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceResponse'
+        '400':
+          description: Solicitud inválida
+        '404':
+          description: Recurso no encontrado
+        '401':
+          description: No autenticado
+        '403':
+          description: No autorizado
+
+components:
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+
+    ResourceRequest:
+      type: object
+      required:
+        - name
+        - type
+        - availableQuantity
+      properties:
+        name:
+          type: string
+        type:
+          $ref: '#/components/schemas/ResourceType'
+        availableQuantity:
+          type: integer
+          minimum: 0
+
+    ResourceResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        type:
+          $ref: '#/components/schemas/ResourceType'
+        availableQuantity:
+          type: integer
+
+    ResourceType:
+      type: string
+      enum:
+        - LAB
+        - EQUIPMENT
+        - SUPPLY
