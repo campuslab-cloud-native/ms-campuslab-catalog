@@ -11,6 +11,7 @@ public class ResourceDataMapper {
         return ResourceEntity.builder()
                 .id(resource.getId())
                 .name(resource.getName())
+                .type(resource.getType())
                 .availableQuantity(resource.getAvailableQuantity())
                 .build();
     }
