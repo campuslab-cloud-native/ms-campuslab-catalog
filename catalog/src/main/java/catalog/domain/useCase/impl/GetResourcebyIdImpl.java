@@ -1,5 +1,6 @@
 package catalog.domain.useCase.impl;
 
+import catalog.common.exception.ResourceNotFoundException;
 import catalog.domain.model.Resource;
 import catalog.domain.repository.ResourceRepository;
 import catalog.domain.useCase.GetResourceByIdUseCase;
@@ -15,10 +16,10 @@ public class GetResourcebyIdImpl implements GetResourceByIdUseCase {
     private final ResourceRepository repository;
 
     @Override
-    public Resource resource(Long id) {
+    public Resource execute(Long id) {
         return repository.findById(id)
                 .orElseThrow(() ->
-                        new NoSuchElementException("Resource not found with id" + id)
+                        new ResourceNotFoundException(id)
                 );
     }
 }

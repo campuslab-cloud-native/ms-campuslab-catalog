@@ -1,5 +1,6 @@
 package catalog.domain.useCase.impl;
 
+import catalog.common.exception.ResourceNotFoundException;
 import catalog.domain.model.Resource;
 import catalog.domain.repository.ResourceRepository;
 import catalog.domain.useCase.UpdateResourceUseCase;
@@ -18,7 +19,7 @@ public class UpdateResourceimpl implements UpdateResourceUseCase {
     public Resource execute(Long id, Resource resource) {
         Resource existingResource = repository.findById(id)
                 .orElseThrow(() ->
-                        new NoSuchElementException("Resource not found with id" + id)
+                        new ResourceNotFoundException(id)
         );
 
         existingResource.setName(resource.getName());
