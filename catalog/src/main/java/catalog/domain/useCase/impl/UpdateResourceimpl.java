@@ -23,7 +23,7 @@ public class UpdateResourceimpl implements UpdateResourceUseCase {
 
         existingResource.setName(resource.getName());
         existingResource.setType(resource.getType());
-        existingResource.setAvalaibleQuantity(resource.getAvalaibleQuantity());
+        existingResource.setAvailableQuantity(resource.getAvailableQuantity());
 
         return repository.save(existingResource);
     }

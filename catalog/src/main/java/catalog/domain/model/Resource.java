@@ -11,6 +11,6 @@ public class Resource {
     private Long id;
     private String name;
     private ResourceType type;
-    private Integer avalaibleQuantity;
+    private Integer availableQuantity;
 
 }
