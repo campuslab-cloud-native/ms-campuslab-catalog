@@ -51,11 +51,33 @@ class GetResourcesUseCaseImplTest {
         when(resourceRepository.findAll())
                 .thenReturn(resources);
 
-        List<Resource> result = useCase.execute();
+        List<Resource> result = useCase.execute(null);
 
         assertEquals(2, result.size());
         assertEquals("Laboratorio de Redes", result.get(0).getName());
 
         verify(resourceRepository).findAll();
+    }
+
+    @Test
+    void shouldReturnResourcesByType() {
+        List<Resource> labs = List.of(
+                Resource.builder()
+                        .id(1L)
+                        .name("Laboratorio de Redes")
+                        .type(ResourceType.LAB)
+                        .availableQuantity(1)
+                        .build()
+        );
+
+        when(resourceRepository.findByType(ResourceType.LAB))
+                .thenReturn(labs);
+
+        List<Resource> result = useCase.execute(ResourceType.LAB);
+
+        assertEquals(1, result.size());
+        assertEquals(ResourceType.LAB, result.get(0).getType());
+
+        verify(resourceRepository).findByType(ResourceType.LAB);
     }
 }

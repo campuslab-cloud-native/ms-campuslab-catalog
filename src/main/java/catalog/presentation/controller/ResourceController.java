@@ -1,5 +1,6 @@
 package catalog.presentation.controller;
 
+import catalog.domain.model.ResourceType;
 import catalog.domain.useCase.CreateResourceUseCase;
 import catalog.domain.useCase.GetResourceByIdUseCase;
 import catalog.domain.useCase.GetResourcesUseCase;
@@ -27,8 +28,10 @@ public class ResourceController {
     private final ResourcePresentationMapper resourcePresentationMapper;
 
     @GetMapping
-    public ResponseEntity<List<ResourceResponse>> getAllResources() {
-        var resources = getResourcesUseCase.execute()
+    public ResponseEntity<List<ResourceResponse>> getAllResources(
+            @RequestParam(required = false) ResourceType type
+    ) {
+        var resources = getResourcesUseCase.execute(type)
                 .stream()
                 .map(resourcePresentationMapper::toResponse)
                 .toList();

@@ -4,6 +4,7 @@ import catalog.data.mapper.ResourceDataMapper;
 import catalog.data.model.ResourceEntity;
 import catalog.data.repository.ResourceJpaRepository;
 import catalog.domain.model.Resource;
+import catalog.domain.model.ResourceType;
 import catalog.domain.repository.ResourceRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -22,6 +23,14 @@ public class ResourceRepositoryImpl implements ResourceRepository {
     @Override
     public List<Resource> findAll() {
         return resourceJpaRepository.findAll()
+                .stream()
+                .map(resourceDataMapper::toDomain)
+                .toList();
+    }
+
+    @Override
+    public List<Resource> findByType(ResourceType type){
+        return resourceJpaRepository.findByType(type)
                 .stream()
                 .map(resourceDataMapper::toDomain)
                 .toList();
