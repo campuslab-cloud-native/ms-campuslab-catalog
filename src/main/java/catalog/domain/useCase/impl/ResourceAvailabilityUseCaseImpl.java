@@ -30,8 +30,8 @@ public class ResourceAvailabilityUseCaseImpl implements ResourceAvailabilityUseC
 
     @Override
     @Transactional
-    public void release(Long id) {
-        if (!repository.releaseAvailability(id)) {
+    public void release(Long id, String operationId) {
+        if (!repository.releaseAvailability(id, operationId)) {
             throw new ResourceNotFoundException(id);
         }
     }

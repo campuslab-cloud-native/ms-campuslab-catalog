@@ -10,14 +10,18 @@ import catalog.presentation.mapper.ResourcePresentationMapper;
 import catalog.presentation.request.ResourceRequest;
 import catalog.presentation.response.ResourceResponse;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
+@Validated
 @RequestMapping("api/catalog/resources")
 @RequiredArgsConstructor
 public class ResourceController {
@@ -85,8 +89,11 @@ public class ResourceController {
     }
 
     @PostMapping("/{id}/availability/release")
-    public ResponseEntity<Void> releaseAvailability(@PathVariable Long id) {
-        resourceAvailabilityUseCase.release(id);
+    public ResponseEntity<Void> releaseAvailability(
+            @PathVariable Long id,
+            @RequestHeader("Idempotency-Key") @NotBlank @Size(max = 128) String operationId
+    ) {
+        resourceAvailabilityUseCase.release(id, operationId);
         return ResponseEntity.noContent().build();
     }
 }

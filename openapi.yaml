@@ -172,11 +172,20 @@ paths:
           schema:
             type: integer
             format: int64
+        - name: Idempotency-Key
+          in: header
+          required: true
+          description: Identificador estable de la reserva cuya liberación se procesa.
+          schema:
+            type: string
+            maxLength: 128
       responses:
         '204':
-          description: Cupo liberado
+          description: Cupo liberado o liberación duplicada ya procesada
         '404':
           description: Recurso no encontrado
+        '409':
+          description: La clave de idempotencia ya fue usada para otro recurso
 
 components:
 

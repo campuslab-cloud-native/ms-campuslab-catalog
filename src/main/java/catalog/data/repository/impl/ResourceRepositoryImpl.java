@@ -1,7 +1,10 @@
 package catalog.data.repository.impl;
 
+import catalog.common.exception.AvailabilityOperationConflictException;
 import catalog.data.mapper.ResourceDataMapper;
+import catalog.data.model.ResourceAvailabilityReleaseEntity;
 import catalog.data.model.ResourceEntity;
+import catalog.data.repository.ResourceAvailabilityReleaseJpaRepository;
 import catalog.data.repository.ResourceJpaRepository;
 import catalog.domain.model.Resource;
 import catalog.domain.model.ResourceType;
@@ -17,6 +20,7 @@ import java.util.Optional;
 public class ResourceRepositoryImpl implements ResourceRepository {
 
     private final ResourceJpaRepository resourceJpaRepository;
+    private final ResourceAvailabilityReleaseJpaRepository availabilityReleaseJpaRepository;
     private final ResourceDataMapper resourceDataMapper;
 
 
@@ -56,8 +60,31 @@ public class ResourceRepositoryImpl implements ResourceRepository {
     }
 
     @Override
-    public boolean releaseAvailability(Long id) {
-        return resourceJpaRepository.releaseAvailability(id) == 1;
+    public boolean releaseAvailability(Long id, String operationId) {
+        Optional<ResourceEntity> resource = resourceJpaRepository.findByIdForUpdate(id);
+        if (resource.isEmpty()) {
+            return false;
+        }
+
+        Optional<ResourceAvailabilityReleaseEntity> previousRelease =
+                availabilityReleaseJpaRepository.findById(operationId);
+        if (previousRelease.isPresent()) {
+            if (!previousRelease.get().getResourceId().equals(id)) {
+                throw new AvailabilityOperationConflictException(operationId);
+            }
+            return true;
+        }
+
+        ResourceEntity entity = resource.get();
+        entity.setAvailableQuantity(entity.getAvailableQuantity() + 1);
+        resourceJpaRepository.save(entity);
+        availabilityReleaseJpaRepository.save(
+                ResourceAvailabilityReleaseEntity.builder()
+                        .operationId(operationId)
+                        .resourceId(id)
+                        .build()
+        );
+        return true;
     }
 
 }

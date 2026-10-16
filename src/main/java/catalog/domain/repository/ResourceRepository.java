@@ -14,5 +14,5 @@ public interface ResourceRepository {
     Optional<Resource> findById(Long id);
     Resource save(Resource resource);
     boolean reserveAvailability(Long id);
-    boolean releaseAvailability(Long id);
+    boolean releaseAvailability(Long id, String operationId);
 }

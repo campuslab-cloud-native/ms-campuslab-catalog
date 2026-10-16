@@ -34,9 +34,21 @@ POST /api/catalog/resources
 PUT /api/catalog/resources/{id}
 ```
 
+Para liberar un cupo asociado a una reserva, el backend de reservas envía:
+
+```http
+POST /api/catalog/resources/{id}/availability/release
+Idempotency-Key: booking:{bookingId}
+```
+
 ## Reglas de negocio
 
 - El stock o cupo disminuye al aprobar una reserva.
+- Liberar un cupo requiere enviar `Idempotency-Key` con un identificador estable
+  de la reserva. Repetir la liberación con la misma clave no vuelve a incrementar
+  la disponibilidad.
+- `GET /api/catalog/resources` solo consulta; la liberación no debe usarse para
+  mostrar ni refrescar cupos.
 - ADMIN puede crear y modificar recursos.
 - ADMIN y OPERATOR pueden consultar recursos.
 

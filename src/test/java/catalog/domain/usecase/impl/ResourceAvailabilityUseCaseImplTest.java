@@ -47,10 +47,10 @@ class ResourceAvailabilityUseCaseImplTest {
 
     @Test
     void releasesCup() {
-        when(repository.releaseAvailability(1L)).thenReturn(true);
+        when(repository.releaseAvailability(1L, "booking:1")).thenReturn(true);
 
-        useCase.release(1L);
+        useCase.release(1L, "booking:1");
 
-        verify(repository).releaseAvailability(1L);
+        verify(repository).releaseAvailability(1L, "booking:1");
     }
 }
