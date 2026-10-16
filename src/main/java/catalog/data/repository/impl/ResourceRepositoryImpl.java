@@ -50,6 +50,14 @@ public class ResourceRepositoryImpl implements ResourceRepository {
         return resourceDataMapper.toDomain(savedEntity);
     }
 
+    @Override
+    public boolean reserveAvailability(Long id) {
+        return resourceJpaRepository.reserveAvailability(id) == 1;
+    }
 
+    @Override
+    public boolean releaseAvailability(Long id) {
+        return resourceJpaRepository.releaseAvailability(id) == 1;
+    }
 
 }

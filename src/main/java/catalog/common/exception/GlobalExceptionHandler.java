@@ -16,12 +16,18 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Map<String, String>> handleResourceNotFound(
             ResourceNotFoundException exception) {
 
-        Map<String, String> response = new HashMap<>();
-        response.put("message", exception.getMessage());
-
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
-                .body(response);
+                .body(Map.of("message", exception.getMessage()));
+    }
+
+    @ExceptionHandler(ResourceUnavailableException.class)
+    public ResponseEntity<Map<String, String>> handleResourceUnavailable(
+            ResourceUnavailableException exception) {
+
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(Map.of("message", exception.getMessage()));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

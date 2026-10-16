@@ -4,6 +4,7 @@ import catalog.domain.model.ResourceType;
 import catalog.domain.useCase.CreateResourceUseCase;
 import catalog.domain.useCase.GetResourceByIdUseCase;
 import catalog.domain.useCase.GetResourcesUseCase;
+import catalog.domain.useCase.ResourceAvailabilityUseCase;
 import catalog.domain.useCase.UpdateResourceUseCase;
 import catalog.presentation.mapper.ResourcePresentationMapper;
 import catalog.presentation.request.ResourceRequest;
@@ -25,6 +26,7 @@ public class ResourceController {
     private final GetResourceByIdUseCase getResourceByIdUseCase;
     private final CreateResourceUseCase createResourceUseCase;
     private final UpdateResourceUseCase updateResourceUseCase;
+    private final ResourceAvailabilityUseCase resourceAvailabilityUseCase;
     private final ResourcePresentationMapper resourcePresentationMapper;
 
     @GetMapping
@@ -74,5 +76,17 @@ public class ResourceController {
         return ResponseEntity.ok(
                 resourcePresentationMapper.toResponse(updateResource)
         );
+    }
+
+    @PostMapping("/{id}/availability/reserve")
+    public ResponseEntity<Void> reserveAvailability(@PathVariable Long id) {
+        resourceAvailabilityUseCase.reserve(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{id}/availability/release")
+    public ResponseEntity<Void> releaseAvailability(@PathVariable Long id) {
+        resourceAvailabilityUseCase.release(id);
+        return ResponseEntity.noContent().build();
     }
 }

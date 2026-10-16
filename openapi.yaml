@@ -136,6 +136,48 @@ paths:
         '403':
           description: No autorizado
 
+  /api/catalog/resources/{id}/availability/reserve:
+
+    post:
+      tags:
+        - Catalog
+      summary: Reservar un cupo del recurso
+      operationId: reserveResourceAvailability
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: Cupo reservado
+        '404':
+          description: Recurso no encontrado
+        '409':
+          description: No hay cupos disponibles
+
+  /api/catalog/resources/{id}/availability/release:
+
+    post:
+      tags:
+        - Catalog
+      summary: Liberar un cupo del recurso
+      operationId: releaseResourceAvailability
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: Cupo liberado
+        '404':
+          description: Recurso no encontrado
+
 components:
 
   securitySchemes:

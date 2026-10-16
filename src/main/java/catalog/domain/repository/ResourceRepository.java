@@ -13,4 +13,6 @@ public interface ResourceRepository {
     List<Resource> findByType(ResourceType type);
     Optional<Resource> findById(Long id);
     Resource save(Resource resource);
+    boolean reserveAvailability(Long id);
+    boolean releaseAvailability(Long id);
 }
