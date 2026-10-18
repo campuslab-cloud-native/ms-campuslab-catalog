@@ -22,7 +22,7 @@ import java.util.List;
 
 @RestController
 @Validated
-@RequestMapping("api/catalog/resources")
+@RequestMapping("/api/v1/catalog/resources")
 @RequiredArgsConstructor
 public class ResourceController {
 
