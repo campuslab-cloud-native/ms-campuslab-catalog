@@ -82,3 +82,11 @@ DB_PASSWORD=
 ```bash
 ./mvnw clean package
 ```
+
+La suite predeterminada ejecuta pruebas unitarias sin Oracle. La prueba de
+integración del contexto de aplicación es opt-in y requiere una base Oracle
+disponible, además de `DB_URL`, `DB_USERNAME` y `DB_PASSWORD`:
+
+```bash
+./mvnw -DRUN_CATALOG_ORACLE_INTEGRATION_TESTS=true test
+```
