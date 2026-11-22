@@ -1,8 +1,13 @@
 openapi: 3.0.3
 
 info:
-  title: CampusLab Catalog API
+  title: CampusLab Catalog Internal API
   version: 1.0.0
+  description: >-
+    API interna de catálogo. Este microservicio no implementa autenticación
+    HTTP propia; la autorización por roles de las rutas públicas se aplica en
+    ms-campuslab-bff. Las rutas de disponibilidad son llamadas internas de
+    Bookings.
 
 servers:
   - url: http://localhost:8082
@@ -11,17 +16,18 @@ tags:
   - name: Catalog
 
 paths:
-
   /api/v1/catalog/resources:
-
     get:
       tags:
         - Catalog
       summary: Listar recursos
       operationId: getResources
-      security:
-        - bearerAuth: []
-
+      parameters:
+        - name: type
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/ResourceType'
       responses:
         '200':
           description: Recursos encontrados
@@ -31,26 +37,18 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/ResourceResponse'
-        '401':
-          description: No autenticado
-        '403':
-          description: No autorizado
 
     post:
       tags:
         - Catalog
       summary: Crear recurso
       operationId: createResource
-      security:
-        - bearerAuth: []
-
       requestBody:
         required: true
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/ResourceRequest'
-
       responses:
         '201':
           description: Recurso creado
@@ -60,21 +58,13 @@ paths:
                 $ref: '#/components/schemas/ResourceResponse'
         '400':
           description: Solicitud inválida
-        '401':
-          description: No autenticado
-        '403':
-          description: No autorizado
 
   /api/v1/catalog/resources/{id}:
-
     get:
       tags:
         - Catalog
       summary: Obtener recurso por ID
       operationId: getResourceById
-      security:
-        - bearerAuth: []
-
       parameters:
         - name: id
           in: path
@@ -82,7 +72,6 @@ paths:
           schema:
             type: integer
             format: int64
-
       responses:
         '200':
           description: Recurso encontrado
@@ -92,19 +81,12 @@ paths:
                 $ref: '#/components/schemas/ResourceResponse'
         '404':
           description: Recurso no encontrado
-        '401':
-          description: No autenticado
-        '403':
-          description: No autorizado
 
     put:
       tags:
         - Catalog
       summary: Actualizar recurso
       operationId: updateResource
-      security:
-        - bearerAuth: []
-
       parameters:
         - name: id
           in: path
@@ -112,14 +94,12 @@ paths:
           schema:
             type: integer
             format: int64
-
       requestBody:
         required: true
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/ResourceRequest'
-
       responses:
         '200':
           description: Recurso actualizado
@@ -131,17 +111,13 @@ paths:
           description: Solicitud inválida
         '404':
           description: Recurso no encontrado
-        '401':
-          description: No autenticado
-        '403':
-          description: No autorizado
 
   /api/v1/catalog/resources/{id}/availability/reserve:
-
     post:
       tags:
         - Catalog
       summary: Reservar un cupo del recurso
+      description: Operación interna invocada por Bookings al crear la solicitud.
       operationId: reserveResourceAvailability
       parameters:
         - name: id
@@ -159,11 +135,11 @@ paths:
           description: No hay cupos disponibles
 
   /api/v1/catalog/resources/{id}/availability/release:
-
     post:
       tags:
         - Catalog
       summary: Liberar un cupo del recurso
+      description: Operación interna invocada por Bookings al cancelar o devolver una reserva.
       operationId: releaseResourceAvailability
       parameters:
         - name: id
@@ -175,7 +151,7 @@ paths:
         - name: Idempotency-Key
           in: header
           required: true
-          description: Identificador estable de la reserva cuya liberación se procesa.
+          description: Identificador estable de la operación de liberación.
           schema:
             type: string
             maxLength: 128
@@ -185,18 +161,10 @@ paths:
         '404':
           description: Recurso no encontrado
         '409':
-          description: La clave de idempotencia ya fue usada para otro recurso
+          description: La clave de idempotencia ya se usó para otro recurso
 
 components:
-
-  securitySchemes:
-    bearerAuth:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
-
   schemas:
-
     ResourceRequest:
       type: object
       required:
